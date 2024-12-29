@@ -1,146 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Dark status bar for dark mode -->
-    <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
-    <title>Receptor</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            background-color: transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        background-color: transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #header, #footer {
+        width: 100%;
+        height: 60px; /* Adjust header/footer height */
+        position: fixed;
+        left: 0;
+        z-index: 10;
+        background-size: cover;
+        background-color: transparent;
+    }
+
+    #header {
+        top: 0; /* Position header at the top */
+        margin-top: 0;
+    }
+
+    #footer {
+        bottom: 0; /* Position footer at the bottom */
+        margin-bottom: 0;
+    }
+
+    canvas {
+        display: block;
+        width: 100%;
+        height: 100%; /* Full screen */
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+        z-index: 1; /* Ensure it stays behind header/footer */
+    }
+</style>
+
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Resize canvas to full screen
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+
+    // Adjust canvas size on window resize
+    window.addEventListener('resize', resizeCanvas);
+
+    // Detect Dark Mode
+    function isDarkMode() {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    // Update Header and Footer Images based on Mode
+    function updateHeaderFooter() {
+        const header = document.getElementById('header');
+        const footer = document.getElementById('footer');
+        if (isDarkMode()) {
+            header.style.backgroundImage = 'url("dark-header.png")';
+            footer.style.backgroundImage = 'url("dark-footer.png")';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black');
+            document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent');
+        } else {
+            header.style.backgroundImage = 'url("light-header.png")';
+            footer.style.backgroundImage = 'url("light-footer.png")';
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white');
+            document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
         }
+    }
 
-        #header, #footer {
-            width: 100%;
-            height: 60px; /* Increase header/footer height */
-            position: fixed;
-            left: 0;
-            z-index: 10;
-            background-size: cover;
-            background-color: transparent;
+    // Update Canvas style based on Dark Mode
+    function updateCanvasStyle() {
+        if (isDarkMode()) {
+            canvas.style.backgroundColor = 'black';
+            ctx.strokeStyle = 'white';
+        } else {
+            canvas.style.backgroundColor = 'white';
+            ctx.strokeStyle = 'black';
         }
-        #header {
-    top: -15px; /* Move header 10px upwards */
-    margin-top: 0; /* Remove any unwanted space above */
-}
-        /* Move header and footer closer to top/bottom */
-        #footer {
-    bottom: 20px; /* Move footer 20px upwards */
-    margin-bottom: 30px; /* Remove unwanted space below footer */
-     }
+    }
 
-    
+    // Initialize header/footer styles based on the current mode
+    updateHeaderFooter();
+    updateCanvasStyle();
 
-        canvas {
-            display: block;
-            width: 100%;
-            height: calc(100% - 120px); /* Full screen minus adjusted header/footer height */
-            position: fixed;
-            top: 60px; /* Adjust based on new header height */
-            left: 0;
-            background-color: transparent;
-        }
-
-    </style>
-</head>
-<body>
-    <div id="header"></div>
-    <canvas id="canvas"></canvas>
-    <div id="footer"></div>
-
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-
-        // Resize canvas based on window size
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 120; // Subtract adjusted header + footer height
-        }
-
-        resizeCanvas();
-
-        // Adjust canvas size on window resize
-        window.addEventListener('resize', resizeCanvas);
-
-        // Detect Dark Mode
-        function isDarkMode() {
-            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-
-        // Update Header and Footer Images based on Mode
-        function updateHeaderFooter() {
-            const header = document.getElementById('header');
-            const footer = document.getElementById('footer');
-            if (isDarkMode()) {
-                header.style.backgroundImage = 'url("dark-header.png")';  // Dark header image
-                footer.style.backgroundImage = 'url("dark-footer.png")';  // Dark footer image
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Dark status bar
-                document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent'); // Dark status bar style
-            } else {
-                header.style.backgroundImage = 'url("light-header.png")';  // Light header image
-                footer.style.backgroundImage = 'url("light-footer.png")';  // Light footer image
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white'); // Light status bar
-                document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default'); // Default status bar style
-            }
-        }
-
-        // Update Canvas style based on Dark Mode
-        function updateCanvasStyle() {
-            if (isDarkMode()) {
-                canvas.style.backgroundColor = 'black';
-                ctx.strokeStyle = 'white';
-            } else {
-                canvas.style.backgroundColor = 'white';
-                ctx.strokeStyle = 'black';
-            }
-        }
-
-        // Initialize header/footer styles based on the current mode
+    // Listen for changes in color scheme
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
         updateHeaderFooter();
         updateCanvasStyle();
+    });
 
-        // Listen for changes in color scheme
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            updateHeaderFooter();
-            updateCanvasStyle();
-        });
+    async function fetchDibujo() {
+        try {
+            const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
+            const path = await response.json();
+            console.log(path);
 
-        async function fetchDibujo() {
-            try {
-                const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
-                const path = await response.json();
-                console.log(path);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (path.length === 0) return;
+            ctx.beginPath();
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                if (path.length === 0) return;
-                ctx.beginPath();
-
-                path.forEach((point) => {
-                    if (point.move) {
-                        ctx.moveTo(point.x, point.y);
-                    } else {
-                        ctx.lineTo(point.x, point.y);
-                        ctx.lineWidth = point.width || 2;
-                    }
-                });
-                
-                ctx.stroke();
-            } catch (error) {
-                console.error('Error al obtener el dibujo:', error);
-            }
+            path.forEach((point) => {
+                if (point.move) {
+                    ctx.moveTo(point.x, point.y);
+                } else {
+                    ctx.lineTo(point.x, point.y);
+                    ctx.lineWidth = point.width || 2;
+                }
+            });
+            
+            ctx.stroke();
+        } catch (error) {
+            console.error('Error al obtener el dibujo:', error);
         }
+    }
 
-        // Periodically fetch drawing data
-        setInterval(fetchDibujo, 2000);
-    </script>
-</body>
-</html>
+    // Periodically fetch drawing data
+    setInterval(fetchDibujo, 2000);
+</script>
