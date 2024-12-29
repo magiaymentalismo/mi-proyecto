@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Receptor</title>
     <style>
         body, html {
@@ -10,18 +11,17 @@
             padding: 0;
             overflow: hidden;
             height: 100%;  /* Asegura que el body ocupe todo el alto */
-            background-color: transparent;  /* Evita que el fondo del body cause franjas */
+            background-color: transparent;
         }
         canvas {
             display: block;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 100px);  /* Ajustamos para que no cubra la barra de estado */
             position: absolute;
-            top: 0;
+            top: 50px; /* Deja espacio para el header */
             left: 0;
-            background-color: transparent;  /* Fondo transparente para el canvas */
+            background-color: transparent;
         }
-        /* Header y Footer */
         #header, #footer {
             position: absolute;
             width: 100%;
@@ -31,13 +31,13 @@
         }
         #header {
             top: 0;
-            height: 50px; /* Ajusta el tamaño como desees */
-            z-index: 10; /* Asegura que el header esté por encima del canvas */
+            height: 50px; 
+            z-index: 10;
         }
         #footer {
             bottom: 0;
-            height: 50px; /* Ajusta el tamaño como desees */
-            z-index: 10; /* Asegura que el footer esté por encima del canvas */
+            height: 50px;
+            z-index: 10;
         }
     </style>
 </head>
@@ -53,10 +53,9 @@
         // Ajusta el tamaño del canvas para ocupar toda la pantalla
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.height = window.innerHeight - 100;  // Ajustar para no cubrir el header y footer
         }
 
-        // Llama a la función para ajustar el tamaño al cargar
         resizeCanvas();
 
         // Ajusta el tamaño del canvas al cambiar el tamaño de la ventana
@@ -72,9 +71,11 @@
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
+                document.querySelector("meta[name='apple-mobile-web-app-status-bar-style']").setAttribute('content', 'black-translucent');
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
             } else {
+                document.querySelector("meta[name='apple-mobile-web-app-status-bar-style']").setAttribute('content', 'default');
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
             }
@@ -83,11 +84,11 @@
         // Cambiar el fondo y trazo dependiendo del modo
         function updateCanvasStyle() {
             if (isDarkMode()) {
-                canvas.style.backgroundColor = 'black';  // Fondo negro en modo oscuro
-                ctx.strokeStyle = 'white';  // Trazo blanco en modo oscuro
+                canvas.style.backgroundColor = 'black';
+                ctx.strokeStyle = 'white';
             } else {
-                canvas.style.backgroundColor = 'white';  // Fondo blanco en modo claro
-                ctx.strokeStyle = 'black';  // Trazo negro en modo claro
+                canvas.style.backgroundColor = 'white';
+                ctx.strokeStyle = 'black';
             }
         }
 
@@ -95,7 +96,6 @@
         updateHeaderFooter();
         updateCanvasStyle();
 
-        // Añadir un listener para cambios de modo en tiempo real
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             updateHeaderFooter();
             updateCanvasStyle();
