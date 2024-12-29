@@ -171,6 +171,10 @@
         canvas.addEventListener('touchmove', erase);
         canvas.addEventListener('touchend', stopErase);
         canvas.addEventListener('touchcancel', stopErase);
+
+        // Prevent touch events from firing default actions
+        canvas.addEventListener('touchstart', (event) => event.preventDefault());
+        canvas.addEventListener('touchmove', (event) => event.preventDefault());
     </script>
 </body>
 </html>
