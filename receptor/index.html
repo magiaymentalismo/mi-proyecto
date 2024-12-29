@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Dark status bar for dark mode -->
-    <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Translucent status bar -->
+    <meta name="theme-color" content="transparent"> <!-- Transparent theme color for mobile browsers -->
+    <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Enable full-screen mode for PWAs -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -29,11 +30,10 @@
         }
 
         #header {
-            top: 0; /* Ensures header is at the very top */
+            top: -13px; /* Move header 10px upwards */
             margin-top: 0; /* Remove any unwanted space above */
-            padding-top: 0; /* Remove any padding */
         }
-
+        /* Move header and footer closer to top/bottom */
         #footer {
             bottom: 15px; /* Move footer 20px upwards */
             margin-bottom: 20px; /* Remove unwanted space below footer */
@@ -46,13 +46,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: transparent; /* No background for canvas */
+            background-color: transparent;
             z-index: 1; /* Ensure it stays behind header/footer */
-        }
-
-        body.dark-mode, html.dark-mode {
-            margin-top: 0;
-            padding-top: 0;
         }
     </style>
 </head>
@@ -86,30 +81,26 @@
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
-                header.style.backgroundImage = 'url("dark-header.png")'; // Use dark mode image
-                header.style.backgroundColor = 'black'; // Set background to black if no image
+                header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black');
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent');
-                document.body.classList.add('dark-mode');
             } else {
-                header.style.backgroundImage = 'url("light-header.png")'; // Use light mode image
-                header.style.backgroundColor = 'transparent'; // Transparent background for light mode
+                header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white');
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
-                document.body.classList.remove('dark-mode');
             }
         }
 
         // Update Canvas style based on Dark Mode
         function updateCanvasStyle() {
             if (isDarkMode()) {
-                canvas.style.backgroundColor = 'black'; // Black canvas background for dark mode
-                ctx.strokeStyle = 'white'; // White stroke color for dark mode
+                canvas.style.backgroundColor = 'black';
+                ctx.strokeStyle = 'white';
             } else {
-                canvas.style.backgroundColor = 'white'; // White canvas background for light mode
-                ctx.strokeStyle = 'black'; // Black stroke color for light mode
+                canvas.style.backgroundColor = 'white';
+                ctx.strokeStyle = 'black';
             }
         }
 
@@ -148,8 +139,8 @@
             }
         }
 
-        // Periodically fetch drawing data (optional)
-         setInterval(fetchDibujo, 2000); // Uncomment if you still need to periodically fetch drawings
+        // Periodically fetch drawing data
+        setInterval(fetchDibujo, 2000);
     </script>
 </body>
 </html>
