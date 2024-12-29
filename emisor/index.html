@@ -10,27 +10,49 @@
             padding: 0;
             overflow: hidden;
             background: #000;
+            font-family: Arial, sans-serif;
         }
         canvas {
             display: block;
             margin: 0 auto;
             background: #000;
-            touch-action: none; /* Desactiva el gesto de desplazamiento */
+            touch-action: none; /* Disable scrolling gestures */
         }
         #controls {
             position: fixed;
             bottom: 10px;
             width: 100%;
             text-align: center;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
             padding: 10px 0;
+            box-sizing: border-box;
         }
         button, label {
             color: white;
             margin: 5px;
+            font-size: 1.2rem;
         }
         input[type="range"] {
             width: 80%;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #444;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:active {
+            background-color: #666;
+        }
+        @media (max-width: 768px) {
+            button, label {
+                font-size: 1rem;
+            }
+            input[type="range"] {
+                width: 90%;
+            }
         }
     </style>
 </head>
@@ -52,7 +74,7 @@
         let path = [];
         let lineWidth = thicknessInput.value;
 
-        // Ajustar canvas al tamaño de la pantalla
+        // Adjust canvas size for mobile devices
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -60,12 +82,11 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Actualizar grosor
         thicknessInput.addEventListener('input', () => {
             lineWidth = thicknessInput.value;
         });
 
-        // Efecto de tiza
+        // Chalk line effect
         function drawChalkLine(x1, y1, x2, y2) {
             const density = 10;
             for (let i = 0; i < density; i++) {
@@ -84,7 +105,7 @@
             ctx.stroke();
         }
 
-        // Dibujo
+        // Drawing
         canvas.addEventListener('pointerdown', (e) => {
             drawing = true;
             path.push({ x: e.offsetX, y: e.offsetY, move: true, width: lineWidth });
@@ -97,12 +118,10 @@
         });
         canvas.addEventListener('pointerup', () => (drawing = false));
 
-        // Botones
+        // Buttons
         sendButton.addEventListener('click', async () => {
             try {
-                // Cambiar la URL al servidor de Render
                 await fetch('https://dibujo-pizarra.onrender.com/api/dibujo', {
-
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(path),
