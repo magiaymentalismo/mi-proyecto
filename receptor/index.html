@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default"> <!-- Default for light mode -->
-    <meta name="theme-color" content="transparent"> <!-- Default for light mode -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Default for dark mode -->
+    <meta name="theme-color" content="white"> <!-- Default for light mode -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -15,34 +15,36 @@
             background-color: transparent;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
         #header, #footer {
             width: 100%;
-            height: 50px; /* Adjust as needed */
+            height: 60px; /* Increase header/footer height */
             position: fixed;
             left: 0;
             z-index: 10;
-        }
-
-        #header {
-            top: 0;
             background-size: cover;
             background-color: transparent;
+        }
+
+        /* Move header and footer closer to top/bottom */
+        #header {
+            top: 0;
+            margin-top: 0; /* Remove unwanted space above header */
         }
 
         #footer {
             bottom: 0;
-            background-size: cover;
-            background-color: transparent;
+            margin-bottom: 0; /* Remove unwanted space below footer */
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: calc(100% - 100px); /* Full screen minus header/footer height */
+            height: calc(100% - 120px); /* Full screen minus adjusted header/footer height */
             position: fixed;
-            top: 50px; /* Adjust based on header height */
+            top: 60px; /* Adjust based on new header height */
             left: 0;
             background-color: transparent;
         }
@@ -61,7 +63,7 @@
         // Resize canvas based on window size
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 100; // Subtract header + footer height
+            canvas.height = window.innerHeight - 120; // Subtract adjusted header + footer height
         }
 
         resizeCanvas();
@@ -79,14 +81,14 @@
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
-                header.style.backgroundImage = 'url("dark-header.png")';
-                footer.style.backgroundImage = 'url("dark-footer.png")';
+                header.style.backgroundImage = 'url("dark-header.png")';  // Dark header image
+                footer.style.backgroundImage = 'url("dark-footer.png")';  // Dark footer image
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Dark status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent'); // Dark status bar style
             } else {
-                header.style.backgroundImage = 'url("light-header.png")';
-                footer.style.backgroundImage = 'url("light-footer.png")';
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent'); // Light status bar color
+                header.style.backgroundImage = 'url("light-header.png")';  // Light header image
+                footer.style.backgroundImage = 'url("light-footer.png")';  // Light footer image
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white'); // Light status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default'); // Default status bar style
             }
         }
