@@ -10,42 +10,41 @@
         body, html {
             margin: 0;
             padding: 0;
+            overflow: hidden;
             height: 100%;
             background-color: transparent;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
-        /* Adjust header and footer to be slightly higher */
         #header, #footer {
             width: 100%;
-            height: 50px; /* Adjust this to fit your design */
+            height: 50px; /* Adjust as needed */
             position: fixed;
             left: 0;
             z-index: 10;
+            background-size: cover;
+            background-color: transparent;
         }
 
-        /* Move header and footer higher */
+        /* Header positioning */
         #header {
-            top: -10px; /* Move header 10px higher */
-            background-color: transparent;
+            top: 0;
         }
 
+        /* Footer positioning */
         #footer {
-            bottom: -10px; /* Move footer 10px higher */
-            background-color: transparent;
+            bottom: 0;
         }
 
-        /* Make sure canvas fills the remaining space between header and footer */
         canvas {
+            display: block;
             width: 100%;
-            height: calc(100% - 100px); /* Subtract height of header + footer */
+            height: calc(100% - 100px); /* Full screen minus header/footer height */
             position: fixed;
-            top: 50px; /* Position below header */
+            top: 50px; /* Adjust based on header height */
             left: 0;
             background-color: transparent;
-            z-index: 1;
         }
 
     </style>
@@ -103,7 +102,6 @@
         updateHeaderFooter();
         updateCanvasStyle();
 
-        // Listen for changes to the color scheme
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             updateHeaderFooter();
             updateCanvasStyle();
