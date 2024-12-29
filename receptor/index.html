@@ -29,14 +29,14 @@
         }
 
         #header {
-    top: -13px; /* Move header 10px upwards */
-    margin-top: 0; /* Remove any unwanted space above */
-}
+            top: -13px; /* Move header 10px upwards */
+            margin-top: 0; /* Remove any unwanted space above */
+        }
         /* Move header and footer closer to top/bottom */
         #footer {
-    bottom: 15px; /* Move footer 20px upwards */
-    margin-bottom: 20px; /* Remove unwanted space below footer */
-     }
+            bottom: 15px; /* Move footer 20px upwards */
+            margin-bottom: 20px; /* Remove unwanted space below footer */
+        }
 
         canvas {
             display: block;
@@ -140,6 +140,36 @@
 
         // Periodically fetch drawing data
         setInterval(fetchDibujo, 2000);
+
+        // Erasing functionality (using touch events)
+        let isErasing = false;
+
+        function startErase(event) {
+            isErasing = true;
+            erase(event);
+        }
+
+        function stopErase() {
+            isErasing = false;
+        }
+
+        function erase(event) {
+            if (!isErasing) return;
+
+            // Get touch position
+            const touch = event.touches[0];
+            const x = touch.clientX;
+            const y = touch.clientY;
+
+            // Clear a small area around the touch point (adjust the size of the "eraser")
+            ctx.clearRect(x - 20, y - 20, 40, 40); // Erase in a 40x40 px area
+        }
+
+        // Add touch event listeners
+        canvas.addEventListener('touchstart', startErase);
+        canvas.addEventListener('touchmove', erase);
+        canvas.addEventListener('touchend', stopErase);
+        canvas.addEventListener('touchcancel', stopErase);
     </script>
 </body>
 </html>
