@@ -15,11 +15,12 @@
             background-color: transparent;
             display: flex;
             flex-direction: column;
+            align-items: center;
         }
 
         #header, #footer {
             width: 100%;
-            height: 50px; /* Adjust header/footer height */
+            height: 60px; /* Increase header/footer height */
             position: fixed;
             left: 0;
             z-index: 10;
@@ -27,23 +28,23 @@
             background-color: transparent;
         }
 
-        /* Adjust header and footer positioning */
+        /* Move header and footer closer to top/bottom */
         #header {
             top: 0;
-            margin-top: 0; /* Remove any unwanted space above the header */
+            margin-top: 0; /* Remove unwanted space above header */
         }
 
         #footer {
             bottom: 0;
-            margin-bottom: 0; /* Remove any unwanted space below the footer */
+            margin-bottom: 0; /* Remove unwanted space below footer */
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: calc(100% - 100px); /* Full screen minus header/footer height */
+            height: calc(100% - 120px); /* Full screen minus adjusted header/footer height */
             position: fixed;
-            top: 50px; /* Adjust based on header height */
+            top: 60px; /* Adjust based on new header height */
             left: 0;
             background-color: transparent;
         }
@@ -62,7 +63,7 @@
         // Resize canvas based on window size
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 100; // Subtract header + footer height
+            canvas.height = window.innerHeight - 120; // Subtract adjusted header + footer height
         }
 
         resizeCanvas();
