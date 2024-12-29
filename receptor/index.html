@@ -143,6 +143,7 @@
 
         // Erasing functionality (using touch events)
         let isErasing = false;
+        const eraserSize = 10;  // Thinner eraser (10x10 px)
 
         function startErase(event) {
             isErasing = true;
@@ -161,8 +162,8 @@
             const x = touch.clientX;
             const y = touch.clientY;
 
-            // Clear a small area around the touch point (adjust the size of the "eraser")
-            ctx.clearRect(x - 20, y - 20, 40, 40); // Erase in a 40x40 px area
+            // Clear a smaller area around the touch point (thinner eraser)
+            ctx.clearRect(x - eraserSize / 2, y - eraserSize / 2, eraserSize, eraserSize); // 10x10 px area
         }
 
         // Add touch event listeners
