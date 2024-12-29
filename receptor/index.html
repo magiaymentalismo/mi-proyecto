@@ -8,7 +8,7 @@
         body, html {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Para evitar barras de desplazamiento */
+            overflow: hidden;
         }
         canvas {
             background: #000;
@@ -65,16 +65,18 @@
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
-                header.style.backgroundImage = 'url("IMG_0575.jpg")';
-                footer.style.backgroundImage = 'url("IMG_0576.jpg")';
+                header.style.backgroundImage = 'url("dark-header.png")';
+                footer.style.backgroundImage = 'url("dark-footer.png")';
             } else {
-                header.style.backgroundImage = 'url("light-notes-icon.png")';
-                footer.style.backgroundImage = 'url("IMG_0573.jpg")';
+                header.style.backgroundImage = 'url("light-header.png")';
+                footer.style.backgroundImage = 'url("light-footer.png")';
             }
         }
 
         // Llamar a la función al cargar la página y cada vez que se cambie el modo
         updateHeaderFooter();
+
+        // Añadir un listener para cambios de modo en tiempo real
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateHeaderFooter);
 
         async function fetchDibujo() {
