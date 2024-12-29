@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="transparent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">  <!-- Ensure status bar is default -->
+    <meta name="theme-color" content="transparent">  <!-- Make the theme color transparent to avoid any bar color interference -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -18,42 +18,41 @@
             align-items: center;
         }
 
-        /* Remove any default margin or padding from the body */
+        /* Reset the background color on body to avoid any background interference */
         body {
-            margin: 0;
-            padding: 0;
+            background-color: transparent;
         }
 
         /* Header and footer positioning */
         #header, #footer {
             width: 100%;
-            height: 80px; /* Increased height */
+            height: 60px; /* Increase header/footer height */
             position: fixed;
             left: 0;
             z-index: 10;
             background-size: cover;
             background-color: transparent;
-            top: 0; /* Position at the top */
+        }
+
+        /* Move header and footer closer to top/bottom */
+        #header {
+            top: 0;
+            margin-top: 0; /* Remove unwanted space above header */
         }
 
         #footer {
             bottom: 0;
-            margin-bottom: 0;
+            margin-bottom: 0; /* Remove unwanted space below footer */
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: calc(100% - 120px); /* Adjusted for header/footer height */
+            height: calc(100% - 120px); /* Full screen minus adjusted header/footer height */
             position: fixed;
-            top: 60px; /* Correctly adjusted to be below the header */
+            top: 60px; /* Adjust based on new header height */
             left: 0;
             background-color: transparent;
-        }
-
-        /* Additional adjustments for viewport and other minor styles */
-        html {
-            height: 100%;
         }
 
     </style>
@@ -70,7 +69,7 @@
         // Resize canvas based on window size
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 120; // Subtract header + footer height
+            canvas.height = window.innerHeight - 120; // Subtract adjusted header + footer height
         }
 
         resizeCanvas();
