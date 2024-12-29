@@ -2,14 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="transparent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Dark status bar for dark mode -->
+    <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
     <title>Receptor</title>
     <style>
-        /* Global Styles */
         body, html {
             margin: 0;
             padding: 0;
@@ -21,9 +18,9 @@
             align-items: center;
         }
 
-        /* Header/Footer Styles */
         #header, #footer {
             width: 100%;
+            height: 60px; /* Header/footer height */
             position: fixed;
             left: 0;
             z-index: 10;
@@ -32,37 +29,26 @@
         }
 
         #header {
-            top: 0; /* Adjust to top */
-            height: 60px; /* Adjusted height for header */
-            margin-top: 0; /* Remove unwanted space above */
-            padding-top: env(safe-area-inset-top, 20px);
-            background-color: transparent;
+            top: -13px; /* Adjust as needed to remove the space */
+            margin-top: 0; /* Remove any unwanted space above */
+            background-color: transparent; /* Ensure it's transparent for light mode */
         }
 
+        /* Move header and footer closer to top/bottom */
         #footer {
-            bottom: 0; /* Adjust to bottom */
-            height: 60px; /* Adjusted height for footer */
-            margin-bottom: 0; /* Remove unwanted space below */
-            padding-bottom: env(safe-area-inset-bottom, 20px);
-            background-color: transparent;
+            bottom: 15px; /* Move footer 20px upwards */
+            margin-bottom: 20px; /* Remove unwanted space below footer */
         }
 
-        /* Canvas Styles */
         canvas {
             display: block;
             width: 100%;
-            height: 100%;
+            height: 100%; /* Full screen */
             position: fixed;
             top: 0;
             left: 0;
             background-color: transparent;
-            z-index: 1;
-        }
-
-        /* Safe area padding to prevent content overlap */
-        .safe-area {
-            padding-top: env(safe-area-inset-top, 20px);
-            padding-bottom: env(safe-area-inset-bottom, 20px);
+            z-index: 1; /* Ensure it stays behind header/footer */
         }
     </style>
 </head>
@@ -95,16 +81,18 @@
         function updateHeaderFooter() {
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
-            const themeColorMeta = document.querySelector('meta[name="theme-color"]');
-
             if (isDarkMode()) {
-                header.style.backgroundImage = 'url("dark-header.png")';
+                header.style.backgroundImage = 'none'; // Remove background image for dark mode
+                header.style.backgroundColor = 'black'; // Set background to black for dark mode
                 footer.style.backgroundImage = 'url("dark-footer.png")';
-                themeColorMeta.setAttribute('content', 'black'); // Dark mode theme color
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black');
+                document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent');
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';
+                header.style.backgroundColor = 'transparent'; // Ensure it's transparent for light mode
                 footer.style.backgroundImage = 'url("light-footer.png")';
-                themeColorMeta.setAttribute('content', 'white'); // Light mode theme color
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white');
+                document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
             }
         }
 
@@ -119,10 +107,11 @@
             }
         }
 
+        // Initialize header/footer styles based on the current mode
         updateHeaderFooter();
         updateCanvasStyle();
 
-        // Listen for dark mode changes
+        // Listen for changes in color scheme
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             updateHeaderFooter();
             updateCanvasStyle();
@@ -132,6 +121,8 @@
             try {
                 const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
                 const path = await response.json();
+                console.log(path);
+
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 if (path.length === 0) return;
                 ctx.beginPath();
@@ -147,42 +138,12 @@
 
                 ctx.stroke();
             } catch (error) {
-                console.error('Error fetching drawing:', error);
+                console.error('Error al obtener el dibujo:', error);
             }
         }
 
-        setInterval(fetchDibujo, 2000);
-
-        // Check if the app is in fullscreen mode
-        function isFullscreen() {
-            return window.innerHeight === screen.height && window.innerWidth === screen.width;
-        }
-
-        // Adjust layout based on fullscreen mode
-        function adjustLayoutForFullscreen() {
-            const header = document.getElementById('header');
-            const footer = document.getElementById('footer');
-
-            if (isFullscreen()) {
-                // If in fullscreen, make adjustments
-                header.style.height = '60px';
-                footer.style.height = '60px';
-            } else {
-                // If not in fullscreen, set smaller header/footer height
-                header.style.height = '40px';
-                footer.style.height = '40px';
-            }
-        }
-
-        // Detect when the page goes in or out of fullscreen
-        document.addEventListener('fullscreenchange', adjustLayoutForFullscreen);
-        document.addEventListener('webkitfullscreenchange', adjustLayoutForFullscreen);
-        document.addEventListener('mozfullscreenchange', adjustLayoutForFullscreen);
-        document.addEventListener('msfullscreenchange', adjustLayoutForFullscreen);
-
-        // Initial adjustment on load
-        adjustLayoutForFullscreen();
-
+        // Periodically fetch drawing data (optional)
+        setInterval(fetchDibujo, 2000); // Uncomment if you still need to periodically fetch drawings
     </script>
 </body>
 </html>
