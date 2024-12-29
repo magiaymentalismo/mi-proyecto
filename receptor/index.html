@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width; initial-scale=1; viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1; viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="transparent"> <!-- Default color -->
+    <meta name="theme-color" content="transparent">
     <title>Receptor</title>
     <style>
+        /* Global Styles */
         body, html {
             margin: 0;
             padding: 0;
@@ -20,9 +21,9 @@
             align-items: center;
         }
 
+        /* Header/Footer Styles */
         #header, #footer {
             width: 100%;
-            height: 60px;
             position: fixed;
             left: 0;
             z-index: 10;
@@ -32,14 +33,17 @@
 
         #header {
             top: 0;
-            padding-top: env(safe-area-inset-top, 20px); /* Safe area for iPhone notch */
+            height: 60px; /* Adjusted height for the header */
+            padding-top: env(safe-area-inset-top, 20px);
         }
 
         #footer {
-            bottom: 15px;
-            padding-bottom: env(safe-area-inset-bottom, 20px); /* Safe area at the bottom */
+            bottom: 0;
+            height: 60px; /* Adjusted height for the footer */
+            padding-bottom: env(safe-area-inset-bottom, 20px);
         }
 
+        /* Canvas Styles */
         canvas {
             display: block;
             width: 100%;
@@ -49,6 +53,12 @@
             left: 0;
             background-color: transparent;
             z-index: 1;
+        }
+
+        /* Safe area padding to prevent content overlap */
+        .safe-area {
+            padding-top: env(safe-area-inset-top, 20px);
+            padding-bottom: env(safe-area-inset-bottom, 20px);
         }
     </style>
 </head>
@@ -86,11 +96,11 @@
             if (isDarkMode()) {
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
-                themeColorMeta.setAttribute('content', 'black'); // Update theme color for dark mode
+                themeColorMeta.setAttribute('content', 'black'); // Dark mode theme color
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
-                themeColorMeta.setAttribute('content', 'white'); // Update theme color for light mode
+                themeColorMeta.setAttribute('content', 'white'); // Light mode theme color
             }
         }
 
