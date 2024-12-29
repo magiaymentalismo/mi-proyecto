@@ -152,6 +152,37 @@
         }
 
         setInterval(fetchDibujo, 2000);
+
+        // Check if the app is in fullscreen mode
+        function isFullscreen() {
+            return window.innerHeight === screen.height && window.innerWidth === screen.width;
+        }
+
+        // Adjust layout based on fullscreen mode
+        function adjustLayoutForFullscreen() {
+            const header = document.getElementById('header');
+            const footer = document.getElementById('footer');
+
+            if (isFullscreen()) {
+                // If in fullscreen, make adjustments
+                header.style.height = '60px';
+                footer.style.height = '60px';
+            } else {
+                // If not in fullscreen, set smaller header/footer height
+                header.style.height = '40px';
+                footer.style.height = '40px';
+            }
+        }
+
+        // Detect when the page goes in or out of fullscreen
+        document.addEventListener('fullscreenchange', adjustLayoutForFullscreen);
+        document.addEventListener('webkitfullscreenchange', adjustLayoutForFullscreen);
+        document.addEventListener('mozfullscreenchange', adjustLayoutForFullscreen);
+        document.addEventListener('msfullscreenchange', adjustLayoutForFullscreen);
+
+        // Initial adjustment on load
+        adjustLayoutForFullscreen();
+
     </script>
 </body>
 </html>
