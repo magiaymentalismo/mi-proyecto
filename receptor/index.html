@@ -108,6 +108,7 @@
         updateHeaderFooter();
         updateCanvasStyle();
 
+        // Listen for changes in color scheme
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             updateHeaderFooter();
             updateCanvasStyle();
