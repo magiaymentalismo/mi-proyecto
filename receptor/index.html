@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Set status bar to black translucent -->
-    <meta name="theme-color" content="transparent"> <!-- Set theme color to transparent, allowing status bar to blend -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default"> <!-- Default status bar style -->
+    <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -83,9 +83,11 @@
             if (isDarkMode()) {
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Set theme-color to black for dark mode
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white'); // Set theme-color to white for light mode
             }
         }
 
