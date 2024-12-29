@@ -15,29 +15,28 @@
             background-color: transparent;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
 
-        /* Fixed Header and Footer */
         #header, #footer {
             width: 100%;
             height: 50px; /* Adjust as needed */
             position: fixed;
             left: 0;
             z-index: 10;
-            background-size: cover;
-            background-color: transparent;
         }
 
         #header {
             top: 0;
+            background-size: cover;
+            background-color: transparent;
         }
 
         #footer {
             bottom: 0;
+            background-size: cover;
+            background-color: transparent;
         }
 
-        /* Canvas positioned below the header and above the footer */
         canvas {
             display: block;
             width: 100%;
@@ -46,7 +45,6 @@
             top: 50px; /* Adjust based on header height */
             left: 0;
             background-color: transparent;
-            z-index: 5;
         }
 
     </style>
@@ -83,13 +81,11 @@
             if (isDarkMode()) {
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
-                // Change meta tags for dark mode
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Dark status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent'); // Dark status bar style
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
-                // Change meta tags for light mode
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent'); // Light status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default'); // Default status bar style
             }
