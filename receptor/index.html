@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Dark status bar for dark mode -->
-    <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Default for dark mode -->
+    <meta name="theme-color" content="white"> <!-- Default for light mode -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -83,12 +83,12 @@
             if (isDarkMode()) {
                 header.style.backgroundImage = 'url("dark-header.png")';  // Dark header image
                 footer.style.backgroundImage = 'url("dark-footer.png")';  // Dark footer image
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Dark status bar
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Dark status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent'); // Dark status bar style
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';  // Light header image
                 footer.style.backgroundImage = 'url("light-footer.png")';  // Light footer image
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white'); // Light status bar
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white'); // Light status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default'); // Default status bar style
             }
         }
