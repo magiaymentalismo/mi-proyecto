@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="transparent">
     <title>Receptor</title>
     <style>
         body, html {
@@ -12,33 +13,40 @@
             overflow: hidden;
             height: 100%;
             background-color: transparent;
+            display: flex;
+            flex-direction: column;
         }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: env(safe-area-inset-top); /* Asegura que no se cubra por la barra de estado */
-            left: 0;
-            background-color: transparent;
-        }
+
         #header, #footer {
-            position: absolute;
             width: 100%;
+            height: 50px; /* Adjust as needed */
+            position: fixed;
             left: 0;
+            z-index: 10;
+        }
+
+        #header {
+            top: 0;
             background-size: cover;
             background-color: transparent;
         }
-        #header {
-            top: 0;
-            height: 50px; /* Ajusta la altura */
-            z-index: 10;
-        }
+
         #footer {
             bottom: 0;
-            height: 50px; /* Ajusta la altura */
-            z-index: 10;
+            background-size: cover;
+            background-color: transparent;
         }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: calc(100% - 100px); /* Full screen minus header/footer height */
+            position: fixed;
+            top: 50px; /* Adjust based on header height */
+            left: 0;
+            background-color: transparent;
+        }
+
     </style>
 </head>
 <body>
@@ -50,38 +58,36 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Ajusta el tamaño del canvas para ocupar toda la pantalla
+        // Resize canvas based on window size
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.height = window.innerHeight - 100; // Subtract header + footer height
         }
 
         resizeCanvas();
 
-        // Ajusta el tamaño del canvas al cambiar el tamaño de la ventana
+        // Adjust canvas size on window resize
         window.addEventListener('resize', resizeCanvas);
 
-        // Detectar modo oscuro
+        // Detect Dark Mode
         function isDarkMode() {
             return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
 
-        // Cambiar las imágenes de header y footer dependiendo del modo
+        // Update Header and Footer Images based on Mode
         function updateHeaderFooter() {
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
-                document.querySelector("meta[name='apple-mobile-web-app-status-bar-style']").setAttribute('content', 'black-translucent');
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
             } else {
-                document.querySelector("meta[name='apple-mobile-web-app-status-bar-style']").setAttribute('content', 'default');
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
             }
         }
 
-        // Cambiar el fondo y trazo dependiendo del modo
+        // Update Canvas style based on Dark Mode
         function updateCanvasStyle() {
             if (isDarkMode()) {
                 canvas.style.backgroundColor = 'black';
@@ -92,7 +98,7 @@
             }
         }
 
-        // Llamar a la función al cargar la página y cada vez que se cambie el modo
+        // Initialize header/footer styles based on the current mode
         updateHeaderFooter();
         updateCanvasStyle();
 
@@ -126,7 +132,7 @@
             }
         }
 
-        // Llamar a fetchDibujo cada 2 segundos para obtener el dibujo actualizado
+        // Periodically fetch drawing data
         setInterval(fetchDibujo, 2000);
     </script>
 </body>
