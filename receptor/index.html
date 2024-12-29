@@ -38,8 +38,10 @@
 
         async function fetchDibujo() {
     try {
-        const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');  // Asegúrate de que esta URL sea la correcta
+        const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
         const path = await response.json();
+        console.log(path); // Agregar esta línea para ver la respuesta
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (path.length === 0) return;
         ctx.beginPath();
@@ -52,13 +54,14 @@
                 ctx.lineWidth = point.width || 2;
             }
         });
-
+        
         ctx.strokeStyle = 'white';
         ctx.stroke();
     } catch (error) {
         console.error('Error al obtener el dibujo:', error);
     }
 }
+
 
 
         // Llamar a fetchDibujo cada 2 segundos para obtener el dibujo actualizado
