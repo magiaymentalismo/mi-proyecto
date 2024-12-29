@@ -20,35 +20,39 @@
         }
         #controls {
             position: fixed;
-            bottom: 10px;
-            width: 100%;
-            text-align: center;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.7);
-            padding: 10px 0;
-            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
         }
         button, label {
             color: white;
-            margin: 5px;
-            font-size: 1.2rem;
-        }
-        input[type="range"] {
-            width: 80%;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1.2rem;
+            margin: 5px 0;
+            font-size: 1rem;
             background-color: #444;
             border: none;
             border-radius: 5px;
+            padding: 8px 15px;
             cursor: pointer;
+            text-align: center;
         }
         button:active {
             background-color: #666;
         }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
         @media (max-width: 768px) {
             button, label {
-                font-size: 1rem;
+                font-size: 0.9rem;
+                padding: 7px 12px;
             }
             input[type="range"] {
                 width: 90%;
@@ -59,7 +63,7 @@
 <body>
     <canvas id="canvas"></canvas>
     <div id="controls">
-        <label for="thickness">Grosor del trazo:</label>
+        <label for="thickness">Grosor:</label>
         <input id="thickness" type="range" min="1" max="10" value="2">
         <button id="sendButton">Enviar</button>
         <button id="clearButton">Borrar</button>
@@ -74,10 +78,12 @@
         let path = [];
         let lineWidth = thicknessInput.value;
 
-        // Adjust canvas size for mobile devices
+        // Adjust canvas size for the emitter
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const width = window.innerWidth * 0.9; // Slight margin for better fitting
+            const height = window.innerHeight * 0.9;
+            canvas.width = width;
+            canvas.height = height;
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
@@ -108,13 +114,22 @@
         // Drawing
         canvas.addEventListener('pointerdown', (e) => {
             drawing = true;
-            path.push({ x: e.offsetX, y: e.offsetY, move: true, width: lineWidth });
+            const rect = canvas.getBoundingClientRect();
+            path.push({
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top,
+                move: true,
+                width: lineWidth
+            });
         });
         canvas.addEventListener('pointermove', (e) => {
             if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
             const prevPoint = path[path.length - 1];
-            drawChalkLine(prevPoint.x, prevPoint.y, e.offsetX, e.offsetY);
-            path.push({ x: e.offsetX, y: e.offsetY, move: false, width: lineWidth });
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            drawChalkLine(prevPoint.x, prevPoint.y, x, y);
+            path.push({ x, y, move: false, width: lineWidth });
         });
         canvas.addEventListener('pointerup', () => (drawing = false));
 
