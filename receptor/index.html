@@ -8,8 +8,7 @@
         body, html {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevent scrollbars */
-            font-family: Arial, sans-serif;
+            overflow: hidden; /* Para evitar barras de desplazamiento */
         }
         canvas {
             background: #000;
@@ -17,27 +16,72 @@
             width: 100%;
             height: 100%;
         }
+        /* Header y Footer */
+        #header, #footer {
+            position: fixed;
+            width: 100%;
+            left: 0;
+        }
+        #header {
+            top: 0;
+            height: 50px; /* Ajusta el tamaño como desees */
+            background-size: cover;
+        }
+        #footer {
+            bottom: 0;
+            height: 50px; /* Ajusta el tamaño como desees */
+            background-size: cover;
+        }
     </style>
 </head>
 <body>
+    <div id="header"></div>
     <canvas id="canvas"></canvas>
+    <div id="footer"></div>
+
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Adjust canvas size for mobile devices
+        // Ajusta el tamaño del canvas para ocupar toda la pantalla
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
+
+        // Llama a la función para ajustar el tamaño al cargar
         resizeCanvas();
+
+        // Ajusta el tamaño del canvas al cambiar el tamaño de la ventana
         window.addEventListener('resize', resizeCanvas);
 
-        // Fetch drawing data every 2 seconds
+        // Detectar modo oscuro
+        function isDarkMode() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+
+        // Cambiar las imágenes de header y footer dependiendo del modo
+        function updateHeaderFooter() {
+            const header = document.getElementById('header');
+            const footer = document.getElementById('footer');
+            if (isDarkMode()) {
+                header.style.backgroundImage = 'url("dark-header.png")';
+                footer.style.backgroundImage = 'url("dark-footer.png")';
+            } else {
+                header.style.backgroundImage = 'url("light-notes-icon.png")';
+                footer.style.backgroundImage = 'url("IMG_0573.jpg")';
+            }
+        }
+
+        // Llamar a la función al cargar la página y cada vez que se cambie el modo
+        updateHeaderFooter();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateHeaderFooter);
+
         async function fetchDibujo() {
             try {
                 const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
                 const path = await response.json();
+                console.log(path);
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 if (path.length === 0) return;
@@ -59,7 +103,8 @@
             }
         }
 
-        setInterval(fetchDibujo, 2000); // Adjust time interval if necessary
+        // Llamar a fetchDibujo cada 2 segundos para obtener el dibujo actualizado
+        setInterval(fetchDibujo, 2000);
     </script>
 </body>
 </html>
