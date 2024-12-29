@@ -9,27 +9,32 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
+            height: 100%;  /* Asegura que el body ocupe todo el alto */
         }
         canvas {
             display: block;
             width: 100%;
             height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         /* Header y Footer */
         #header, #footer {
-            position: fixed;
+            position: absolute;
             width: 100%;
             left: 0;
+            background-size: cover;
         }
         #header {
             top: 0;
             height: 50px; /* Ajusta el tamaño como desees */
-            background-size: cover;
+            z-index: 10; /* Asegura que el header esté por encima del canvas */
         }
         #footer {
             bottom: 0;
             height: 50px; /* Ajusta el tamaño como desees */
-            background-size: cover;
+            z-index: 10; /* Asegura que el footer esté por encima del canvas */
         }
     </style>
 </head>
