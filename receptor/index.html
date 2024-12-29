@@ -36,6 +36,7 @@
             height: 60px; /* Adjusted height for header */
             margin-top: 0; /* Remove unwanted space above */
             padding-top: env(safe-area-inset-top, 20px);
+            background-color: transparent;
         }
 
         #footer {
@@ -43,6 +44,7 @@
             height: 60px; /* Adjusted height for footer */
             margin-bottom: 0; /* Remove unwanted space below */
             padding-bottom: env(safe-area-inset-bottom, 20px);
+            background-color: transparent;
         }
 
         /* Canvas Styles */
@@ -73,7 +75,7 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Resize canvas to full screen with proper scaling
+        // Resize canvas to full screen
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
