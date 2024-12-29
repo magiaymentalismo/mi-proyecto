@@ -17,26 +17,25 @@
             flex-direction: column;
         }
 
+        /* Make header and footer fixed and customizable */
         #header, #footer {
             width: 100%;
             height: 50px; /* Adjust as needed */
             position: fixed;
-            left: 0;
             z-index: 10;
+            background-size: cover;
+            background-color: transparent;
         }
 
         #header {
             top: 0;
-            background-size: cover;
-            background-color: transparent;
         }
 
         #footer {
             bottom: 0;
-            background-size: cover;
-            background-color: transparent;
         }
 
+        /* Canvas position below header */
         canvas {
             display: block;
             width: 100%;
