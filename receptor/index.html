@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Dark status bar for dark mode -->
-    <meta name="theme-color" content="black"> <!-- White status bar for light mode -->
+    <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -46,7 +46,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: transparent;
+            background-color: transparent; /* No background for canvas */
             z-index: 1; /* Ensure it stays behind header/footer */
         }
 
@@ -105,11 +105,11 @@
         // Update Canvas style based on Dark Mode
         function updateCanvasStyle() {
             if (isDarkMode()) {
-                canvas.style.backgroundColor = 'black';
-                ctx.strokeStyle = 'white';
+                canvas.style.backgroundColor = 'black'; // Black canvas background for dark mode
+                ctx.strokeStyle = 'white'; // White stroke color for dark mode
             } else {
-                canvas.style.backgroundColor = 'white';
-                ctx.strokeStyle = 'black';
+                canvas.style.backgroundColor = 'white'; // White canvas background for light mode
+                ctx.strokeStyle = 'black'; // Black stroke color for light mode
             }
         }
 
@@ -149,7 +149,7 @@
         }
 
         // Periodically fetch drawing data (optional)
-        setInterval(fetchDibujo, 2000); // Uncomment if you still need to periodically fetch drawings
+         setInterval(fetchDibujo, 2000); // Uncomment if you still need to periodically fetch drawings
     </script>
 </body>
 </html>
