@@ -37,32 +37,29 @@
         window.addEventListener('resize', resizeCanvas);
 
         async function fetchDibujo() {
-            try {
-                // Actualiza la URL para que apunte a tu aplicación en Render
-                const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
-                const path = await response.json();
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                if (path.length === 0) return;
-                ctx.beginPath();
-                
-                path.forEach((point) => {
-                    // Si el punto tiene el campo 'move', simplemente movemos el lápiz
-                    if (point.move) {
-                        ctx.moveTo(point.x, point.y);
-                    } else {
-                        // Si no es 'move', dibujamos la línea
-                        ctx.lineTo(point.x, point.y);
-                        // Mantener el grosor del trazo según lo recibido
-                        ctx.lineWidth = point.width || 2; // Si no se especifica el grosor, usa 2 por defecto
-                    }
-                });
+    try {
+        const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');  // Asegúrate de que esta URL sea la correcta
+        const path = await response.json();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (path.length === 0) return;
+        ctx.beginPath();
 
-                ctx.strokeStyle = 'white';
-                ctx.stroke();
-            } catch (error) {
-                console.error('Error al obtener el dibujo:', error);
+        path.forEach((point) => {
+            if (point.move) {
+                ctx.moveTo(point.x, point.y);
+            } else {
+                ctx.lineTo(point.x, point.y);
+                ctx.lineWidth = point.width || 2;
             }
-        }
+        });
+
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
+    } catch (error) {
+        console.error('Error al obtener el dibujo:', error);
+    }
+}
+
 
         // Llamar a fetchDibujo cada 2 segundos para obtener el dibujo actualizado
         setInterval(fetchDibujo, 2000);
