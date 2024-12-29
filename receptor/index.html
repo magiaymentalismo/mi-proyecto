@@ -17,9 +17,10 @@
             flex-direction: column;
         }
 
+        /* Ensure header and footer have no extra margins */
         #header, #footer {
             width: 100%;
-            height: 50px; /* Adjust as needed */
+            height: 50px; /* Adjust height as needed */
             position: fixed;
             left: 0;
             z-index: 10;
@@ -37,6 +38,7 @@
             background-color: transparent;
         }
 
+        /* Adjust canvas to fit between header and footer */
         canvas {
             display: block;
             width: 100%;
