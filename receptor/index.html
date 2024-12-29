@@ -86,15 +86,15 @@
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
-                header.style.backgroundImage = 'none'; // Remove background image for dark mode
-                header.style.backgroundColor = 'black'; // Set background to black for dark mode
+                header.style.backgroundImage = 'url("dark-header.png")'; // Use dark mode image
+                header.style.backgroundColor = 'black'; // Set background to black if no image
                 footer.style.backgroundImage = 'url("dark-footer.png")';
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black');
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent');
                 document.body.classList.add('dark-mode');
             } else {
-                header.style.backgroundImage = 'url("light-header.png")';
-                header.style.backgroundColor = 'transparent'; // Ensure it's transparent for light mode
+                header.style.backgroundImage = 'url("light-header.png")'; // Use light mode image
+                header.style.backgroundColor = 'transparent'; // Transparent background for light mode
                 footer.style.backgroundImage = 'url("light-footer.png")';
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white');
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
