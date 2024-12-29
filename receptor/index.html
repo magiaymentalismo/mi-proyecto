@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="transparent">
+    <meta name="theme-color" content="transparent"> <!-- Default color -->
     <title>Receptor</title>
     <style>
         body, html {
@@ -81,14 +81,16 @@
         function updateHeaderFooter() {
             const header = document.getElementById('header');
             const footer = document.getElementById('footer');
+            const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+
             if (isDarkMode()) {
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black');
+                themeColorMeta.setAttribute('content', 'black'); // Update theme color for dark mode
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
-                document.querySelector('meta[name="theme-color"]').setAttribute('content', 'white');
+                themeColorMeta.setAttribute('content', 'white'); // Update theme color for light mode
             }
         }
 
@@ -105,6 +107,8 @@
 
         updateHeaderFooter();
         updateCanvasStyle();
+
+        // Listen for dark mode changes
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
             updateHeaderFooter();
             updateCanvasStyle();
