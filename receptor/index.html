@@ -15,13 +15,15 @@
             background-color: transparent;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        /* Make header and footer fixed and customizable */
+        /* Fixed Header and Footer */
         #header, #footer {
             width: 100%;
             height: 50px; /* Adjust as needed */
             position: fixed;
+            left: 0;
             z-index: 10;
             background-size: cover;
             background-color: transparent;
@@ -35,7 +37,7 @@
             bottom: 0;
         }
 
-        /* Canvas position below header */
+        /* Canvas positioned below the header and above the footer */
         canvas {
             display: block;
             width: 100%;
@@ -44,6 +46,7 @@
             top: 50px; /* Adjust based on header height */
             left: 0;
             background-color: transparent;
+            z-index: 5;
         }
 
     </style>
