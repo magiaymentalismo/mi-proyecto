@@ -102,6 +102,7 @@
             try {
                 // Cambiar la URL al servidor de Render
                 await fetch('https://dibujo-pizarra.onrender.com/api/dibujo', {
+
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(path),
