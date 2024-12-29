@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -32,14 +32,14 @@
         }
 
         #header {
-            top: -13px; /* Move header upwards */
+            top: 0; /* Adjust to top */
             height: 60px; /* Adjusted height for header */
             margin-top: 0; /* Remove unwanted space above */
             padding-top: env(safe-area-inset-top, 20px);
         }
 
         #footer {
-            bottom: 15px; /* Move footer upwards */
+            bottom: 0; /* Adjust to bottom */
             height: 60px; /* Adjusted height for footer */
             margin-bottom: 0; /* Remove unwanted space below */
             padding-bottom: env(safe-area-inset-bottom, 20px);
@@ -73,7 +73,7 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        // Resize canvas to full screen
+        // Resize canvas to full screen with proper scaling
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
