@@ -81,11 +81,13 @@
             if (isDarkMode()) {
                 header.style.backgroundImage = 'url("dark-header.png")';
                 footer.style.backgroundImage = 'url("dark-footer.png")';
+                // Change meta tags for dark mode
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black'); // Dark status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent'); // Dark status bar style
             } else {
                 header.style.backgroundImage = 'url("light-header.png")';
                 footer.style.backgroundImage = 'url("light-footer.png")';
+                // Change meta tags for light mode
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'transparent'); // Light status bar color
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default'); // Default status bar style
             }
