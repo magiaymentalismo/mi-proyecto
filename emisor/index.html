@@ -100,7 +100,8 @@
         // Botones
         sendButton.addEventListener('click', async () => {
             try {
-                await fetch('http://localhost:3000/api/dibujo', {
+                // Cambiar la URL al servidor de Render
+                await fetch('https://dibujo-pizarra.onrender.com/api/dibujo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(path),

@@ -13,13 +13,20 @@ let dibujoActual = null;
 
 // Endpoint para enviar un dibujo
 app.post('/api/dibujo', (req, res) => {
-    dibujoActual = req.body;
+    // Verifica que se haya recibido un dibujo en el cuerpo de la solicitud
+    if (!req.body || !Array.isArray(req.body)) {
+        return res.status(400).send({ error: 'Se esperaba un dibujo en formato de array' });
+    }
+
+    dibujoActual = req.body; // Actualiza el dibujo actual con los datos recibidos
+    console.log('Dibujo recibido:', dibujoActual); // Verifica el contenido recibido
     res.status(200).send({ success: true });
 });
 
-// Endpoint para recibir el dibujo
+// Endpoint para obtener el dibujo actual
 app.get('/api/dibujo', (req, res) => {
-    res.status(200).json(dibujoActual || []);
+    console.log('Dibujo actual:', dibujoActual); // Verifica lo que se está enviando
+    res.status(200).json(dibujoActual || []); // Devuelve el dibujo actual o un arreglo vacío si no existe
 });
 
 // Servir las webs
