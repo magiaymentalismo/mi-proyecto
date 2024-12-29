@@ -18,35 +18,42 @@
             align-items: center;
         }
 
+        /* Remove any default margin or padding from the body */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header and footer positioning */
         #header, #footer {
             width: 100%;
-            height: 60px; /* Increase header/footer height */
+            height: 80px; /* Increased height */
             position: fixed;
             left: 0;
             z-index: 10;
             background-size: cover;
             background-color: transparent;
-        }
-
-        /* Move header and footer closer to top/bottom */
-        #header {
-            top: 0;
-            margin-top: 0; /* Remove unwanted space above header */
+            top: 0; /* Position at the top */
         }
 
         #footer {
             bottom: 0;
-            margin-bottom: 0; /* Remove unwanted space below footer */
+            margin-bottom: 0;
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: calc(100% - 120px); /* Full screen minus adjusted header/footer height */
+            height: calc(100% - 120px); /* Adjusted for header/footer height */
             position: fixed;
-            top: 60px; /* Adjust based on new header height */
+            top: 60px; /* Correctly adjusted to be below the header */
             left: 0;
             background-color: transparent;
+        }
+
+        /* Additional adjustments for viewport and other minor styles */
+        html {
+            height: 100%;
         }
 
     </style>
@@ -63,7 +70,7 @@
         // Resize canvas based on window size
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight - 120; // Subtract adjusted header + footer height
+            canvas.height = window.innerHeight - 120; // Subtract header + footer height
         }
 
         resizeCanvas();
