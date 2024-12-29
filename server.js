@@ -3,7 +3,10 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000; // Usa el puerto de Render o 3000 como respaldo
+app.listen(port, () => {
+    console.log(`Servidor corriendo en el puerto ${port}`);
+});
 
 // Middleware
 app.use(cors());
