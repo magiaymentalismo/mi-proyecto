@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptor</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Para evitar barras de desplazamiento */
+        }
+        canvas {
+            background: #000;
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Ajusta el tamaño del canvas para ocupar toda la pantalla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        // Llama a la función para ajustar el tamaño al cargar
+        resizeCanvas();
+
+        // Ajusta el tamaño del canvas al cambiar el tamaño de la ventana
+        window.addEventListener('resize', resizeCanvas);
+
+        async function fetchDibujo() {
+            try {
+                const response = await fetch('http://localhost:3000/api/dibujo');
+                const path = await response.json();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                if (path.length === 0) return;
+                ctx.beginPath();
+                
+                path.forEach((point) => {
+                    // Si el punto tiene el campo 'move', simplemente movemos el lápiz
+                    if (point.move) {
+                        ctx.moveTo(point.x, point.y);
+                    } else {
+                        // Si no es 'move', dibujamos la línea
+                        ctx.lineTo(point.x, point.y);
+                        // Mantener el grosor del trazo según lo recibido
+                        ctx.lineWidth = point.width || 2; // Si no se especifica el grosor, usa 2 por defecto
+                    }
+                });
+
+                ctx.strokeStyle = 'white';
+                ctx.stroke();
+            } catch (error) {
+                console.error('Error al obtener el dibujo:', error);
+            }
+        }
+
+        setInterval(fetchDibujo, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emisor</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: #000;
+            touch-action: none; /* Desactiva el gesto de desplazamiento */
+        }
+        #controls {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+        }
+        button, label {
+            color: white;
+            margin: 5px;
+        }
+        input[type="range"] {
+            width: 80%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="controls">
+        <label for="thickness">Grosor del trazo:</label>
+        <input id="thickness" type="range" min="1" max="10" value="2">
+        <button id="sendButton">Enviar</button>
+        <button id="clearButton">Borrar</button>
+    </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const sendButton = document.getElementById('sendButton');
+        const clearButton = document.getElementById('clearButton');
+        const thicknessInput = document.getElementById('thickness');
+        let drawing = false;
+        let path = [];
+        let lineWidth = thicknessInput.value;
+
+        // Ajustar canvas al tamaño de la pantalla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Actualizar grosor
+        thicknessInput.addEventListener('input', () => {
+            lineWidth = thicknessInput.value;
+        });
+
+        // Efecto de tiza
+        function drawChalkLine(x1, y1, x2, y2) {
+            const density = 10;
+            for (let i = 0; i < density; i++) {
+                const offsetX = (Math.random() - 0.5) * lineWidth * 2;
+                const offsetY = (Math.random() - 0.5) * lineWidth * 2;
+                ctx.beginPath();
+                ctx.arc(x1 + offsetX, y1 + offsetY, 0.5, 0, Math.PI * 2, false);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+            }
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+        }
+
+        // Dibujo
+        canvas.addEventListener('pointerdown', (e) => {
+            drawing = true;
+            path.push({ x: e.offsetX, y: e.offsetY, move: true, width: lineWidth });
+        });
+        canvas.addEventListener('pointermove', (e) => {
+            if (!drawing) return;
+            const prevPoint = path[path.length - 1];
+            drawChalkLine(prevPoint.x, prevPoint.y, e.offsetX, e.offsetY);
+            path.push({ x: e.offsetX, y: e.offsetY, move: false, width: lineWidth });
+        });
+        canvas.addEventListener('pointerup', () => (drawing = false));
+
+        // Botones
+        sendButton.addEventListener('click', async () => {
+            try {
+                await fetch('http://localhost:3000/api/dibujo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(path),
+                });
+                path = [];
+            } catch (error) {
+                console.error('Error al enviar:', error);
+            }
+        });
+
+        clearButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            path = [];
+        });
+    </script>
+</body>
+</html>
