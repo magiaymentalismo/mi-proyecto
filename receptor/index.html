@@ -111,8 +111,9 @@
                 const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
                 const path = await response.json();
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas initially
                 if (path.length === 0) return;
+
                 ctx.beginPath();
 
                 path.forEach((point) => {
@@ -135,6 +136,7 @@
         // Erasing functionality (using touch events)
         let isErasing = false;
         const eraserSize = 20;  // Eraser size (make it bigger if needed)
+        let lastEraseTime = 0;  // Used for throttling erase action
 
         function startErase(event) {
             isErasing = true;
@@ -147,6 +149,11 @@
 
         function erase(event) {
             if (!isErasing) return;
+
+            // Throttling the erase function to avoid flickering and dotted lines
+            const now = Date.now();
+            if (now - lastEraseTime < 10) return;  // Throttle by 10ms to avoid fast movement issues
+            lastEraseTime = now;
 
             // Get touch position (clientX and clientY for mouse, touches for touch devices)
             let x, y;
