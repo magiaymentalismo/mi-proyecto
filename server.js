@@ -30,7 +30,8 @@ io.on('connection', (socket) => {
 
     // Handle drawing events
     socket.on('draw', (data) => {
-        drawingHistory.push(data);
+        const lineData = { type: 'line', ...data };
+        drawingHistory.push(lineData);
         // Broadcast the drawing data to all other clients
         socket.broadcast.emit('draw', data);
     });
@@ -44,6 +45,22 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log('Un cliente se ha desconectado');
     });
+});
+
+// Endpoint para generar imagen
+app.post('/api/generate', (req, res) => {
+    const { prompt } = req.body;
+    if (!prompt) {
+        return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+    const imageData = { type: 'image', url: imageUrl };
+
+    drawingHistory.push(imageData);
+    io.emit('image', imageData);
+
+    res.json({ success: true, url: imageUrl });
 });
 
 // Servir las webs

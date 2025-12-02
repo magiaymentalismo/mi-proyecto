@@ -160,28 +160,40 @@
             ctx.stroke();
         }
 
+        // Helper to draw image
+        function drawImage(url) {
+            const img = new Image();
+            img.onload = () => {
+                // Draw image centered or full screen? Let's do centered for now
+                // or maybe just draw it at 0,0 if it's a background replacement?
+                // The user said "a drawing of a dog appear".
+                // Let's draw it to fit the canvas, maintaining aspect ratio if possible, 
+                // or just fill. Let's fill for impact.
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = url;
+        }
+
         let lastX = 0;
         let lastY = 0;
 
         // Socket.io event listeners
         socket.on('history', (history) => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Replay history
-            // Note: History is a list of points. We need to connect them.
-            // The history format is { x, y, move, width }
 
-            // We need to be careful about "move" events.
-            // If it's a move, we update lastX/lastY but don't draw.
-            // If it's not a move, we draw from lastX/lastY to current.
-
-            history.forEach(point => {
-                if (point.move) {
-                    lastX = point.x;
-                    lastY = point.y;
-                } else {
-                    drawChalkLine(lastX, lastY, point.x, point.y, point.width);
-                    lastX = point.x;
-                    lastY = point.y;
+            history.forEach(item => {
+                if (item.type === 'image') {
+                    drawImage(item.url);
+                } else if (item.type === 'line' || !item.type) {
+                    // !item.type for backward compatibility with old history items if any
+                    if (item.move) {
+                        lastX = item.x;
+                        lastY = item.y;
+                    } else {
+                        drawChalkLine(lastX, lastY, item.x, item.y, item.width);
+                        lastX = item.x;
+                        lastY = item.y;
+                    }
                 }
             });
         });
@@ -195,6 +207,10 @@
                 lastX = data.x;
                 lastY = data.y;
             }
+        });
+
+        socket.on('image', (data) => {
+            drawImage(data.url);
         });
 
         socket.on('clear', () => {
