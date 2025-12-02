@@ -143,27 +143,36 @@
             // Let's store the last point.
         });
 
-        // Let's rewrite the drawing logic to be simpler and compatible with the stream.
         // We will track the last position.
 
         let lastX = 0;
         let lastY = 0;
 
+        // Helper to get correct coordinates
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        // Drawing
         canvas.addEventListener('pointerdown', (e) => {
             drawing = true;
-            lastX = e.offsetX;
-            lastY = e.offsetY;
+            const pos = getPos(e);
+            lastX = pos.x;
+            lastY = pos.y;
 
-            // Emit a "move" or start event if needed, but for simple lines, 
-            // we can just emit the first point as a move.
             const data = { x: lastX, y: lastY, move: true, width: lineWidth };
             socket.emit('draw', data);
         });
 
         canvas.addEventListener('pointermove', (e) => {
             if (!drawing) return;
-            const currentX = e.offsetX;
-            const currentY = e.offsetY;
+            const pos = getPos(e);
+            const currentX = pos.x;
+            const currentY = pos.y;
 
             drawChalkLine(lastX, lastY, currentX, currentY);
 
@@ -174,7 +183,14 @@
             lastY = currentY;
         });
 
-        canvas.addEventListener('pointerup', () => (drawing = false));
+        canvas.addEventListener('pointerup', () => {
+            drawing = false;
+        });
+
+        // Stop drawing if pointer leaves canvas
+        canvas.addEventListener('pointerleave', () => {
+            drawing = false;
+        });
 
         clearButton.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
