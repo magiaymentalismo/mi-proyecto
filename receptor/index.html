@@ -164,12 +164,27 @@
         function drawImage(url) {
             const img = new Image();
             img.onload = () => {
-                // Draw image centered or full screen? Let's do centered for now
-                // or maybe just draw it at 0,0 if it's a background replacement?
-                // The user said "a drawing of a dog appear".
-                // Let's draw it to fit the canvas, maintaining aspect ratio if possible, 
-                // or just fill. Let's fill for impact.
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // Clear canvas first
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Calculate dimensions to center the image
+                // Leave space for footer (60px) and some padding
+                const maxWidth = canvas.width * 0.7;
+                const maxHeight = (canvas.height - 120) * 0.7; // 60px top + 60px bottom
+
+                let drawWidth = img.width;
+                let drawHeight = img.height;
+
+                // Scale to fit within max dimensions while maintaining aspect ratio
+                const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+                drawWidth = img.width * scale;
+                drawHeight = img.height * scale;
+
+                // Center the image
+                const x = (canvas.width - drawWidth) / 2;
+                const y = (canvas.height - drawHeight) / 2;
+
+                ctx.drawImage(img, x, y, drawWidth, drawHeight);
             };
             img.src = url;
         }
