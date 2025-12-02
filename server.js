@@ -77,7 +77,7 @@ app.get('/api/generate-from-api', async (req, res) => {
             return res.status(400).json({ error: 'No query found in external API response' });
         }
 
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent("hand drawing of " + prompt)}`;
         const imageData = { type: 'image', url: imageUrl };
 
         drawingHistory.push(imageData);
@@ -89,6 +89,36 @@ app.get('/api/generate-from-api', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch from external API' });
     }
 });
+
+// Polling logic
+let lastQuery = "";
+
+async function pollExternalApi() {
+    try {
+        const response = await fetch('https://11q.co/api/last/131');
+        if (!response.ok) return; // Silent fail on error
+
+        const data = await response.json();
+        const currentQuery = data.query;
+
+        if (currentQuery && currentQuery !== lastQuery) {
+            console.log(`New query detected: ${currentQuery}`);
+            lastQuery = currentQuery;
+
+            const prompt = "hand drawing of " + currentQuery;
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+            const imageData = { type: 'image', url: imageUrl };
+
+            drawingHistory.push(imageData);
+            io.emit('image', imageData);
+        }
+    } catch (error) {
+        console.error('Error polling external API:', error);
+    }
+}
+
+// Start polling every 5 seconds
+setInterval(pollExternalApi, 5000);
 
 // Servir las webs
 app.use('/emisor', express.static(__dirname + '/emisor'));
