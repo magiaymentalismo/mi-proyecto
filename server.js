@@ -63,6 +63,33 @@ app.post('/api/generate', (req, res) => {
     res.json({ success: true, url: imageUrl });
 });
 
+// Endpoint para generar imagen desde API externa
+app.get('/api/generate-from-api', async (req, res) => {
+    try {
+        const response = await fetch('https://11q.co/api/last/131');
+        if (!response.ok) {
+            throw new Error(`External API error: ${response.statusText}`);
+        }
+        const data = await response.json();
+        const prompt = data.query;
+
+        if (!prompt) {
+            return res.status(400).json({ error: 'No query found in external API response' });
+        }
+
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+        const imageData = { type: 'image', url: imageUrl };
+
+        drawingHistory.push(imageData);
+        io.emit('image', imageData);
+
+        res.json({ success: true, prompt: prompt, url: imageUrl });
+    } catch (error) {
+        console.error('Error fetching from external API:', error);
+        res.status(500).json({ error: 'Failed to fetch from external API' });
+    }
+});
+
 // Servir las webs
 app.use('/emisor', express.static(__dirname + '/emisor'));
 app.use('/receptor', express.static(__dirname + '/receptor'));
