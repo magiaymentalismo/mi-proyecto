@@ -77,7 +77,7 @@ app.get('/api/generate-from-api', async (req, res) => {
             return res.status(400).json({ error: 'No query found in external API response' });
         }
 
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent("simple black and white line drawing by 5 year old child, transparent background, wobbly imperfect lines, childish sketch, stick figure style of " + prompt)}`;
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent("messy scribbled drawing by 5 year old child, black and white, transparent background, very wobbly uneven lines, crude simple shapes, childish doodle of " + prompt)}`;
         const imageData = { type: 'image', url: imageUrl };
 
         drawingHistory.push(imageData);
@@ -105,7 +105,7 @@ async function pollExternalApi() {
             console.log(`New query detected: ${currentQuery}`);
             lastQuery = currentQuery;
 
-            const prompt = "simple black and white line drawing by 5 year old child, transparent background, wobbly imperfect lines, childish sketch, stick figure style of " + currentQuery;
+            const prompt = "messy scribbled drawing by 5 year old child, black and white, transparent background, very wobbly uneven lines, crude simple shapes, childish doodle of " + currentQuery;
             const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
             const imageData = { type: 'image', url: imageUrl };
 
