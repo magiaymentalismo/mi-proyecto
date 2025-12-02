@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Dark status bar for dark mode -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Dark status bar for dark mode -->
     <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
     <title>Receptor</title>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -18,9 +21,11 @@
             align-items: center;
         }
 
-        #header, #footer {
+        #header,
+        #footer {
             width: 100%;
-            height: 60px; /* Header/footer height */
+            height: 60px;
+            /* Header/footer height */
             position: fixed;
             left: 0;
             z-index: 10;
@@ -29,35 +34,45 @@
         }
 
         #header {
-            top: -13px; /* Adjust as needed to remove the space */
-            margin-top: 0; /* Remove any unwanted space above */
-            background-color: transparent; /* Ensure it's transparent for light mode */
+            top: -13px;
+            /* Adjust as needed to remove the space */
+            margin-top: 0;
+            /* Remove any unwanted space above */
+            background-color: transparent;
+            /* Ensure it's transparent for light mode */
         }
 
         /* Move header and footer closer to top/bottom */
         #footer {
-            bottom: 15px; /* Move footer 20px upwards */
-            margin-bottom: 20px; /* Remove unwanted space below footer */
+            bottom: 15px;
+            /* Move footer 20px upwards */
+            margin-bottom: 20px;
+            /* Remove unwanted space below footer */
         }
 
         canvas {
             display: block;
             width: 100%;
-            height: 100%; /* Full screen */
+            height: 100%;
+            /* Full screen */
             position: fixed;
             top: 0;
             left: 0;
             background-color: transparent;
-            z-index: 1; /* Ensure it stays behind header/footer */
+            z-index: 1;
+            /* Ensure it stays behind header/footer */
         }
     </style>
 </head>
+
 <body>
     <div id="header"></div>
     <canvas id="canvas"></canvas>
     <div id="footer"></div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
+        const socket = io();
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
@@ -117,33 +132,75 @@
             updateCanvasStyle();
         });
 
-        async function fetchDibujo() {
-            try {
-                const response = await fetch('https://dibujo-pizarra.onrender.com/api/dibujo');
-                const path = await response.json();
-                console.log(path);
+        // Chalk line effect (replicated from emisor for consistency)
+        function drawChalkLine(x1, y1, x2, y2, width) {
+            const density = 10;
+            // Use the current stroke style (white or black based on mode)
+            // But we need to set fillStyle for the chalk particles.
+            // If dark mode (white stroke), particles should be white.
+            // If light mode (black stroke), particles should be black.
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                if (path.length === 0) return;
+            const isDark = isDarkMode();
+            const particleColor = isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
+            const strokeColor = isDark ? 'white' : 'black';
+
+            for (let i = 0; i < density; i++) {
+                const offsetX = (Math.random() - 0.5) * width * 2;
+                const offsetY = (Math.random() - 0.5) * width * 2;
                 ctx.beginPath();
-
-                path.forEach((point) => {
-                    if (point.move) {
-                        ctx.moveTo(point.x, point.y);
-                    } else {
-                        ctx.lineTo(point.x, point.y);
-                        ctx.lineWidth = point.width || 2;
-                    }
-                });
-
-                ctx.stroke();
-            } catch (error) {
-                console.error('Error al obtener el dibujo:', error);
+                ctx.arc(x1 + offsetX, y1 + offsetY, 0.5, 0, Math.PI * 2, false);
+                ctx.fillStyle = particleColor;
+                ctx.fill();
             }
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = width;
+            ctx.stroke();
         }
 
-        // Periodically fetch drawing data (optional)
-        setInterval(fetchDibujo, 2000); // Uncomment if you still need to periodically fetch drawings
+        let lastX = 0;
+        let lastY = 0;
+
+        // Socket.io event listeners
+        socket.on('history', (history) => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Replay history
+            // Note: History is a list of points. We need to connect them.
+            // The history format is { x, y, move, width }
+
+            // We need to be careful about "move" events.
+            // If it's a move, we update lastX/lastY but don't draw.
+            // If it's not a move, we draw from lastX/lastY to current.
+
+            history.forEach(point => {
+                if (point.move) {
+                    lastX = point.x;
+                    lastY = point.y;
+                } else {
+                    drawChalkLine(lastX, lastY, point.x, point.y, point.width);
+                    lastX = point.x;
+                    lastY = point.y;
+                }
+            });
+        });
+
+        socket.on('draw', (data) => {
+            if (data.move) {
+                lastX = data.x;
+                lastY = data.y;
+            } else {
+                drawChalkLine(lastX, lastY, data.x, data.y, data.width);
+                lastX = data.x;
+                lastY = data.y;
+            }
+        });
+
+        socket.on('clear', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
     </script>
 </body>
+
 </html>

@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emisor</title>
     <style>
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background: #000;
             font-family: Arial, sans-serif;
         }
+
         canvas {
             display: block;
             margin: 0 auto;
             background: #000;
-            touch-action: none; /* Disable scrolling gestures */
+            touch-action: none;
+            /* Disable scrolling gestures */
         }
+
         #controls {
             position: fixed;
             bottom: 10px;
@@ -27,14 +32,18 @@
             padding: 10px 0;
             box-sizing: border-box;
         }
-        button, label {
+
+        button,
+        label {
             color: white;
             margin: 5px;
             font-size: 1.2rem;
         }
+
         input[type="range"] {
             width: 80%;
         }
+
         button {
             padding: 10px 20px;
             font-size: 1.2rem;
@@ -43,35 +52,40 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         button:active {
             background-color: #666;
         }
+
         @media (max-width: 768px) {
-            button, label {
+
+            button,
+            label {
                 font-size: 1rem;
             }
+
             input[type="range"] {
                 width: 90%;
             }
         }
     </style>
 </head>
+
 <body>
     <canvas id="canvas"></canvas>
     <div id="controls">
         <label for="thickness">Grosor del trazo:</label>
         <input id="thickness" type="range" min="1" max="10" value="2">
-        <button id="sendButton">Enviar</button>
         <button id="clearButton">Borrar</button>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
     <script>
+        const socket = io();
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        const sendButton = document.getElementById('sendButton');
         const clearButton = document.getElementById('clearButton');
         const thicknessInput = document.getElementById('thickness');
         let drawing = false;
-        let path = [];
         let lineWidth = thicknessInput.value;
 
         // Adjust canvas size for mobile devices
@@ -108,34 +122,65 @@
         // Drawing
         canvas.addEventListener('pointerdown', (e) => {
             drawing = true;
-            path.push({ x: e.offsetX, y: e.offsetY, move: true, width: lineWidth });
+            const data = { x: e.offsetX, y: e.offsetY, move: true, width: lineWidth };
+            // Draw locally
+            // (Optional: we could just emit and let the server broadcast back, 
+            // but drawing locally feels more responsive)
+            // For now, we just emit the move command. 
+            // Actually, the previous logic stored a path. 
+            // We need to emit the start of a line.
+            socket.emit('draw', data);
         });
+
         canvas.addEventListener('pointermove', (e) => {
             if (!drawing) return;
-            const prevPoint = path[path.length - 1];
-            drawChalkLine(prevPoint.x, prevPoint.y, e.offsetX, e.offsetY);
-            path.push({ x: e.offsetX, y: e.offsetY, move: false, width: lineWidth });
-        });
-        canvas.addEventListener('pointerup', () => (drawing = false));
+            // Calculate previous point is tricky without state, but we can send segments.
+            // The receiver needs to know if it's a move or a lineTo.
+            // In the previous logic: path.push({ x, y, move: true/false })
 
-        // Buttons
-        sendButton.addEventListener('click', async () => {
-            try {
-                await fetch('https://dibujo-pizarra.onrender.com/api/dibujo', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(path),
-                });
-                path = [];
-            } catch (error) {
-                console.error('Error al enviar:', error);
-            }
+            // We need to draw locally to see what we are doing
+            // But we don't have the "prevPoint" easily accessible unless we store it.
+            // Let's store the last point.
         });
+
+        // Let's rewrite the drawing logic to be simpler and compatible with the stream.
+        // We will track the last position.
+
+        let lastX = 0;
+        let lastY = 0;
+
+        canvas.addEventListener('pointerdown', (e) => {
+            drawing = true;
+            lastX = e.offsetX;
+            lastY = e.offsetY;
+
+            // Emit a "move" or start event if needed, but for simple lines, 
+            // we can just emit the first point as a move.
+            const data = { x: lastX, y: lastY, move: true, width: lineWidth };
+            socket.emit('draw', data);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (!drawing) return;
+            const currentX = e.offsetX;
+            const currentY = e.offsetY;
+
+            drawChalkLine(lastX, lastY, currentX, currentY);
+
+            const data = { x: currentX, y: currentY, move: false, width: lineWidth };
+            socket.emit('draw', data);
+
+            lastX = currentX;
+            lastY = currentY;
+        });
+
+        canvas.addEventListener('pointerup', () => (drawing = false));
 
         clearButton.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            path = [];
+            socket.emit('clear');
         });
     </script>
 </body>
+
 </html>
