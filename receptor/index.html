@@ -232,6 +232,13 @@
         socket.on('clear', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
+
+        // Add click handler to footer to clear canvas
+        const footer = document.getElementById('footer');
+        footer.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            socket.emit('clear');
+        });
     </script>
 </body>
 

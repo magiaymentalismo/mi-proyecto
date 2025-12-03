@@ -117,8 +117,8 @@ async function pollExternalApi() {
     }
 }
 
-// Start polling every 5 seconds
-setInterval(pollExternalApi, 5000);
+// Start polling every 2 seconds
+setInterval(pollExternalApi, 2000);
 
 // Servir las webs
 app.use('/emisor', express.static(__dirname + '/emisor'));
