@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow all origins for simplicity, adjust for production
+        origin: "*",
         methods: ["GET", "POST"]
     }
 });
@@ -21,6 +21,27 @@ app.use(express.json());
 // Dibujo almacenado en memoria
 let drawingHistory = [];
 
+// ==== Helper para prompts ====
+
+// Estilo base "dibujo de niño de 5 años"
+const CHILDISH_STYLE = [
+    'messy scribbled drawing made by a 5 year old child',
+    'simple childlike doodle',
+    'black and white line art',
+    'transparent background',
+    'very wobbly uneven lines',
+    'crude simple shapes',
+    'no shading, no colors, no background elements'
+].join(', ');
+
+// Construye el prompt final dado un "subject"
+function buildChildishPrompt(subject) {
+    const cleanSubject = (subject || '').trim();
+    if (!cleanSubject) return CHILDISH_STYLE;
+
+    return `${CHILDISH_STYLE}, childish doodle of ${cleanSubject}`;
+}
+
 // Socket.io connection handling
 io.on('connection', (socket) => {
     console.log('Un cliente se ha conectado');
@@ -32,7 +53,6 @@ io.on('connection', (socket) => {
     socket.on('draw', (data) => {
         const lineData = { type: 'line', ...data };
         drawingHistory.push(lineData);
-        // Broadcast the drawing data to all other clients
         socket.broadcast.emit('draw', data);
     });
 
@@ -47,7 +67,7 @@ io.on('connection', (socket) => {
     });
 });
 
-// Endpoint para generar imagen
+// Endpoint para generar imagen (prompt libre)
 app.post('/api/generate', (req, res) => {
     const { prompt } = req.body;
     if (!prompt) {
@@ -63,27 +83,29 @@ app.post('/api/generate', (req, res) => {
     res.json({ success: true, url: imageUrl });
 });
 
-// Endpoint para generar imagen desde API externa
+// Endpoint para generar imagen desde API externa (estilo "niño 5 años")
 app.get('/api/generate-from-api', async (req, res) => {
     try {
         const response = await fetch('https://11q.co/api/last/131');
         if (!response.ok) {
             throw new Error(`External API error: ${response.statusText}`);
         }
-        const data = await response.json();
-        const prompt = data.query;
 
-        if (!prompt) {
+        const data = await response.json();
+        const query = (data.query || '').trim();
+
+        if (!query) {
             return res.status(400).json({ error: 'No query found in external API response' });
         }
 
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent("messy scribbled drawing by 5 year old child, black and white, transparent background, very wobbly uneven lines, crude simple shapes, childish doodle of " + prompt)}`;
+        const finalPrompt = buildChildishPrompt(query);
+        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}`;
         const imageData = { type: 'image', url: imageUrl };
 
         drawingHistory.push(imageData);
         io.emit('image', imageData);
 
-        res.json({ success: true, prompt: prompt, url: imageUrl });
+        res.json({ success: true, prompt: finalPrompt, url: imageUrl });
     } catch (error) {
         console.error('Error fetching from external API:', error);
         res.status(500).json({ error: 'Failed to fetch from external API' });
@@ -99,13 +121,13 @@ async function pollExternalApi() {
         if (!response.ok) return; // Silent fail on error
 
         const data = await response.json();
-        const currentQuery = data.query;
+        const currentQuery = (data.query || '').trim();
 
         if (currentQuery && currentQuery !== lastQuery) {
             console.log(`New query detected: ${currentQuery}`);
             lastQuery = currentQuery;
 
-            const prompt = "messy scribbled drawing by 5 year old child, black and white, transparent background, very wobbly uneven lines, crude simple shapes, childish doodle of " + currentQuery;
+            const prompt = buildChildishPrompt(currentQuery);
             const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
             const imageData = { type: 'image', url: imageUrl };
 
