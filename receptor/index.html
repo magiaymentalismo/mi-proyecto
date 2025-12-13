@@ -98,7 +98,7 @@
             const footer = document.getElementById('footer');
             if (isDarkMode()) {
                 header.style.backgroundImage = 'none'; // Remove background image for dark mode
-                header.style.backgroundColor = 'black'; // Set background to black for dark mode
+                header.style.backgroundColor = 'transparent'; // Keep transparent to avoid black bar
                 footer.style.backgroundImage = 'url("dark-footer.png")';
                 document.querySelector('meta[name="theme-color"]').setAttribute('content', 'black');
                 document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'black-translucent');
