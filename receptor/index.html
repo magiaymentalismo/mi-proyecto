@@ -24,8 +24,8 @@
         #header,
         #footer {
             width: 100%;
-            height: 60px;
-            /* Header/footer height */
+            height: 120px;
+            /* Header/footer height - increased for better iOS Notes look */
             position: fixed;
             left: 0;
             z-index: 10;
@@ -170,10 +170,10 @@
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 // Calculate dimensions to center the image
-                // Leave space for footer (60px) and some padding
+                // Leave space for header (120px) and footer (120px) and some padding
                 const maxWidth = canvas.width * 0.9;
-                const maxHeight = (canvas.height - 120) * 0.9;
-                // 60px top + 60px bottom
+                const maxHeight = (canvas.height - 240) * 0.9;
+                // 120px top + 120px bottom
 
                 let drawWidth = img.width;
                 let drawHeight = img.height;
