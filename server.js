@@ -23,15 +23,13 @@ let drawingHistory = [];
 
 // ==== Helper para prompts ====
 
-// Estilo base "dibujo de niño de 5 años"
+// Estilo base "dibujo de niño de 5 años" (recognizable, not just abstract scribble noise)
 const CHILDISH_STYLE = [
-    'messy scribbled drawing made by a 5 year old child',
-    'simple childlike doodle',
-    'black and white line art',
-    'transparent background',
-    'very wobbly uneven lines',
-    'crude simple shapes',
-    'no shading, no colors, no background elements'
+    "children's coloring book illustration",
+    'flat 2D vector style, not a photograph, not photorealistic',
+    'one single recognizable object, centered, isolated on plain white background',
+    'thick clean simple black outline, slightly imperfect hand-drawn lines',
+    'minimal, cute, no shading, no color, no clutter, no text, no background scenery'
 ].join(', ');
 
 // Construye el prompt final dado un "subject"
@@ -39,7 +37,20 @@ function buildChildishPrompt(subject) {
     const cleanSubject = (subject || '').trim();
     if (!cleanSubject) return CHILDISH_STYLE;
 
-    return `${CHILDISH_STYLE}, childish doodle of ${cleanSubject}`;
+    return `${CHILDISH_STYLE}, a simple recognizable drawing of a ${cleanSubject}`;
+}
+
+// Arma la URL de pollinations.ai con parámetros que mejoran la calidad/nitidez
+// y un seed random para que la misma palabra no devuelva siempre la misma imagen cacheada
+function buildPollinationsUrl(prompt) {
+    const seed = Math.floor(Math.random() * 1_000_000);
+    const params = new URLSearchParams({
+        width: '768',
+        height: '768',
+        nologo: 'true',
+        seed: String(seed)
+    });
+    return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?${params}`;
 }
 
 // Socket.io connection handling
@@ -103,7 +114,7 @@ app.get('/api/generate-from-api', async (req, res) => {
         io.emit('word', wordData);
 
         const finalPrompt = buildChildishPrompt(query);
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}`;
+        const imageUrl = buildPollinationsUrl(finalPrompt);
         const imageData = { type: 'image', url: imageUrl };
 
         drawingHistory.push(imageData);
@@ -147,7 +158,7 @@ async function pollExternalApi() {
             io.emit('word', wordData);
 
             const prompt = buildChildishPrompt(currentQuery);
-            const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+            const imageUrl = buildPollinationsUrl(prompt);
             const imageData = { type: 'image', url: imageUrl };
 
             drawingHistory.push(imageData);
