@@ -8,6 +8,9 @@
     <!-- Dark status bar for dark mode -->
     <meta name="theme-color" content="white"> <!-- White status bar for light mode -->
     <title>Receptor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         body,
         html {
@@ -192,6 +195,35 @@
             img.src = url;
         }
 
+        // Draw the raw written word in a handwriting-style font (no external API, always accurate)
+        async function drawWord(text) {
+            await document.fonts.load('600 100px "Caveat"');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const isDark = isDarkMode();
+            const maxWidth = canvas.width * 0.8;
+            const maxHeight = (canvas.height - 240) * 0.5;
+
+            let fontSize = 160;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = isDark ? 'white' : 'black';
+
+            while (fontSize > 20) {
+                ctx.font = `600 ${fontSize}px "Caveat", cursive`;
+                if (ctx.measureText(text).width <= maxWidth && fontSize <= maxHeight) break;
+                fontSize -= 4;
+            }
+
+            const jitterDeg = (Math.random() - 0.5) * 4;
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(jitterDeg * Math.PI / 180);
+            ctx.fillText(text, 0, 0);
+            ctx.restore();
+        }
+
         let lastX = 0;
         let lastY = 0;
 
@@ -202,6 +234,8 @@
             history.forEach(item => {
                 if (item.type === 'image') {
                     drawImage(item.url);
+                } else if (item.type === 'word') {
+                    drawWord(item.text);
                 } else if (item.type === 'line' || !item.type) {
                     // !item.type for backward compatibility with old history items if any
                     if (item.move) {
@@ -229,6 +263,10 @@
 
         socket.on('image', (data) => {
             drawImage(data.url);
+        });
+
+        socket.on('word', (data) => {
+            drawWord(data.text);
         });
 
         socket.on('clear', () => {

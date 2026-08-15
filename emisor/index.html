@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emisor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         body,
         html {
@@ -221,6 +224,34 @@
             img.src = url;
         }
 
+        // Draw the raw written word in a handwriting-style font (no external API, always accurate)
+        async function drawWord(text) {
+            await document.fonts.load('600 100px "Caveat"');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const maxWidth = canvas.width * 0.8;
+            const maxHeight = (canvas.height - 120) * 0.5;
+
+            let fontSize = 160;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = 'white';
+
+            while (fontSize > 20) {
+                ctx.font = `600 ${fontSize}px "Caveat", cursive`;
+                if (ctx.measureText(text).width <= maxWidth && fontSize <= maxHeight) break;
+                fontSize -= 4;
+            }
+
+            const jitterDeg = (Math.random() - 0.5) * 4;
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(jitterDeg * Math.PI / 180);
+            ctx.fillText(text, 0, 0);
+            ctx.restore();
+        }
+
         clearButton.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             socket.emit('clear');
@@ -228,6 +259,10 @@
 
         socket.on('image', (data) => {
             drawImage(data.url);
+        });
+
+        socket.on('word', (data) => {
+            drawWord(data.text);
         });
 
         socket.on('clear', () => {

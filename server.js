@@ -98,6 +98,10 @@ app.get('/api/generate-from-api', async (req, res) => {
             return res.status(400).json({ error: 'No query found in external API response' });
         }
 
+        const wordData = { type: 'word', text: query };
+        drawingHistory.push(wordData);
+        io.emit('word', wordData);
+
         const finalPrompt = buildChildishPrompt(query);
         const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(finalPrompt)}`;
         const imageData = { type: 'image', url: imageUrl };
@@ -134,6 +138,10 @@ async function pollExternalApi() {
         if (currentQuery && currentQuery !== lastQuery) {
             console.log(`New query detected: ${currentQuery} (was: ${lastQuery})`);
             lastQuery = currentQuery;
+
+            const wordData = { type: 'word', text: currentQuery };
+            drawingHistory.push(wordData);
+            io.emit('word', wordData);
 
             const prompt = buildChildishPrompt(currentQuery);
             const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
