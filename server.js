@@ -121,8 +121,16 @@ let lastQuery = null;
 
 async function pollExternalApi() {
     try {
-        const response = await fetch('https://11q.co/api/last/131');
-        if (!response.ok) return; // Silent fail on error
+        const response = await fetch('https://11q.co/api/last/131', {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; dibujo-pizarra-bot/1.0)',
+                'Accept': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            console.error(`Polling 11q.co failed: HTTP ${response.status} ${response.statusText}`);
+            return;
+        }
 
         const data = await response.json();
         const currentQuery = (data.query || '').trim();
