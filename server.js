@@ -117,7 +117,7 @@ app.get('/api/generate-from-api', async (req, res) => {
 });
 
 // Polling logic
-let lastQuery = null; // null means "not initialized yet"
+let lastQuery = null;
 
 async function pollExternalApi() {
     try {
@@ -127,14 +127,9 @@ async function pollExternalApi() {
         const data = await response.json();
         const currentQuery = (data.query || '').trim();
 
-        // First run: just initialize, don't generate
-        if (lastQuery === null) {
-            lastQuery = currentQuery;
-            console.log(`Initialized with query: ${currentQuery}`);
-            return;
-        }
-
-        // Only generate if query actually changed
+        // Generate whenever the query differs from what we last showed,
+        // including right after a restart (Render free tier restarts/sleeps
+        // often, and the word shouldn't get silently swallowed when that happens).
         if (currentQuery && currentQuery !== lastQuery) {
             console.log(`New query detected: ${currentQuery} (was: ${lastQuery})`);
             lastQuery = currentQuery;
